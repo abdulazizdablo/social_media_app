@@ -9,6 +9,9 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Post;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -46,7 +49,7 @@ class User extends Authenticatable
     ];
 
 
-    public function posts()
+    public function posts(): HasMany
     {
 
 
@@ -54,8 +57,38 @@ class User extends Authenticatable
     }
 
 
+    public function profile(): HasOne
+    {
+
+        return $this->hasOne(Profile::class);
+    }
+
     public function followedUsers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'users_followed_users', 'user_id', 'followed_user_id');
+        return $this->belongsToMany(User::class, 'users_followed_users', 'followed_user_id');
+    }
+
+
+    public function followingUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'users_followed_users', 'user_id');
+    }
+
+
+    public function hasLiked($model)
+    {
+        $user = auth()->user();
+        $likes = $model->likes;
+
+        foreach ($likes as $like) {
+            if ($like->user_id == $user->id) {
+                return true;
+            }
+        }
+
+        return false;
+
     }
 }
+
+   
