@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Notifaction;
 
 
 class NotifactionsController extends Controller
@@ -13,7 +14,7 @@ class NotifactionsController extends Controller
         $user = User::find($request->input('userId'));
         $text = $request->input('text');
 
-        $notification = new Notification();
+        $notification = new Notifaction();
         $notification->text = $text;
         $notification->user_id = $user->id;
         $notification->save();
